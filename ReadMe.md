@@ -15,6 +15,8 @@ This project creates an iOS widget using the [Scriptable App](https://scriptable
    - Holger Danske Kollegiet
    - Nimbusparken
    - Kathrine kollegiet
+    <img src="images/ChooseDorm.png" width=300>
+
 6. Add the Scriptable widget to your homescreen (hold on an app until it shakes and click the "+" button on the upper left corner).  
 The suggested size is small.
 7. Click on the newly created widget and select the newly created script.  
