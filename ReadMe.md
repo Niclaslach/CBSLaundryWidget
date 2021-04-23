@@ -12,4 +12,4 @@ This project creates an iOS widget using the [Scriptable App](https://scriptable
 5. Add the Scriptable widget to your homescreen (hold on an app until it shakes and click the "+" button on the upper left corner).
 Suggested size is small.
 6. Click on the newly created widget and select the newly created script.
-7. Optional: Under Parameter enter your username and password to see your current Saniva balance. The format should be <username>;<password> Example: 123;0000
+7. Optional: Under Parameter enter your username and password to see your current Saniva balance. The format should be \<username\>;\<password\> Example: 123;0000
