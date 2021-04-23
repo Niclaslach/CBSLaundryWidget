@@ -1,7 +1,7 @@
 # CBS Laundry Widget
 
-This project creates an iOS widget using the [Scriptable App](https://scriptable.app).
-!()[images/ExamplePicture.png]
+This project creates an iOS widget using the [Scriptable App](https://scriptable.app).  
+<img src="images/ExamplePicture.png" width = 100>
 
 ## Install the Widget
 
