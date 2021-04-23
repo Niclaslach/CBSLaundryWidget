@@ -7,7 +7,7 @@ const thresholds = {
   green: 100
 }
 
-const dorm = "Porcelaenshaven" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
+const dorm = "Nimbusparken" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
 let dorm_ip = ""
 
 switch (dorm) {
@@ -84,19 +84,8 @@ async function createWidget() {
 
   let laundryStatus = await getLaundryStatus()
 
-  let washStack = listwidget.addStack();
+  addWashStack(listwidget, laundryStatus.wash)
 
-  if (laundryStatus.wash.lenght <= 4 4) {  //TODO: This is really ugly -> Put logic into function
-    washStackFiller(washStack, laundryStatus.wash)
-
-    listwidget.addSpacer(0)
-  } else {
-    washStackFiller(washStack, laundryStatus.wash.slice(0,4))
-    listwidget.addSpacer(0)
-    washStackFiller(washStack, laundryStatus.wash.slice(4))
-    listwidget.addSpacer(0)
-  }
-  
 
   let dryerStack = listwidget.addStack();
   dryerStackFiller(dryerStack, laundryStatus.dryer);
@@ -146,9 +135,15 @@ async function createWidget() {
 
 
 
-function washStackFiller(stack, machines) {
+function addWashStack(listwidget, machines) {
+
+  let washStacks = [listwidget.addStack()];
+
   machines.forEach((machine, index) => {
-    stack.addImage(getDiagram(machine, String(index + 1), "laundry"));
+    if (index % 4 == 0 && index > 0) {
+      washStacks.push(listwidget.addStack())
+    }
+    washStacks[Math.floor(index/4)].addImage(getDiagram(machine, String(index + 1), "laundry"));
   })
 }
 
