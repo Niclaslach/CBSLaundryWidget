@@ -11,12 +11,10 @@ const debugging = 1
 
 let darkmode = null
 let balance = null
-
+let loginCredentials = []
 try {
-  let loginCredentials = args.widgetParameter.split(';')
-} catch {
-  let loginCredentials = []
-}
+  loginCredentials = args.widgetParameter.split(';')
+} catch {}
 
 
 
@@ -90,8 +88,10 @@ async function createWidget() {
 
   updatedStack.addSpacer()
 
-  let balanceText = updatedStack.addText(balance)
-  balanceText.font = Font.lightSystemFont(9)
+  if (loginCredentials.length == 2) {
+    let balanceText = updatedStack.addText(balance)
+    balanceText.font = Font.lightSystemFont(9)
+  }
 
 
   updatedStack.addSpacer() // 60
@@ -368,18 +368,20 @@ async function getLaundryStatus() {
 
 
 
-  console.log(response)
+  console.log(`Response: ${response}`)
+
   return calcProgress(response)
 
 
   function calcProgress(input) {
     input = input.slice(2)
 
-
-    var output = [0]
+    let machines = { wash: [], dryer: [] }
+    let progress = 0
     for (i = 0; i < input.length; i = i + 5) {
+      progress = 0
       if (input[i + 2] == "Ready") {
-        output[i / 5] = 101
+        progress = 101
       } else {
 
         let startTime = input[i + 4].split(" ")[1].split(":")
@@ -387,12 +389,18 @@ async function getLaundryStatus() {
         let now = new Date
         var percent = Math.min(((now.getHours() - startTime[0]) * 60 + now.getMinutes() - startTime[1]) / 70 * 100, 90)
         console.log(percent)
-        output[i / 5] = percent
+        progress = percent
+      }
+
+      if (input[i].includes("WASH")) {
+        machines.wash.push(progress)
+      } else if (input[i].includes("DRYER")) {
+        machines.dryer.push(progress)
       }
 
     }
-    console.log(output)
-    return output
+    console.log(`Output: ${machines}`)
+    return machines
   }
 }
 
