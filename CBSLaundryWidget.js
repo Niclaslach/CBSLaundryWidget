@@ -7,6 +7,30 @@ const thresholds = {
   green: 100
 }
 
+const dorm = "Porcelaenshaven" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
+let dorm_ip = ""
+
+switch (dorm) {
+  case "Porcelaenshaven":
+    dorm_ip = "http://77.75.166.66/Status.asp"
+    break;
+
+  case "Holger Danske Kollegiet":
+    dorm_ip = "http://95.209.150.175/Status.asp"
+    break;
+
+  case "Nimbusparken":
+    dorm_ip = "http://77.75.160.131/Status.asp"
+    break;
+
+  case "Kathrine kollegiet":
+    dorm_ip = "http://95.209.150.208/Status.asp"
+    break;
+
+  default:
+    throw new Error("Dorm unknown");
+}
+
 const debugging = 1
 
 let darkmode = null
@@ -14,7 +38,7 @@ let balance = null
 let loginCredentials = []
 try {
   loginCredentials = args.widgetParameter.split(';')
-} catch {}
+} catch { }
 
 
 
@@ -60,13 +84,22 @@ async function createWidget() {
 
   let laundryStatus = await getLaundryStatus()
 
-  let laundryStack = listwidget.addStack();
-  laundryStackFiller(laundryStack, laundryStatus.slice(0, 3)) //laundryStatus.subarray(0, 2));    
+  let washStack = listwidget.addStack();
 
-  listwidget.addSpacer(0)
+  if (laundryStatus.wash.lenght <= 4 4) {  //TODO: This is really ugly -> Put logic into function
+    washStackFiller(washStack, laundryStatus.wash)
+
+    listwidget.addSpacer(0)
+  } else {
+    washStackFiller(washStack, laundryStatus.wash.slice(0,4))
+    listwidget.addSpacer(0)
+    washStackFiller(washStack, laundryStatus.wash.slice(4))
+    listwidget.addSpacer(0)
+  }
+  
 
   let dryerStack = listwidget.addStack();
-  dryerStackFiller(dryerStack, laundryStatus.slice(-3));
+  dryerStackFiller(dryerStack, laundryStatus.dryer);
 
   listwidget.addSpacer(9);
 
@@ -113,19 +146,16 @@ async function createWidget() {
 
 
 
-function laundryStackFiller(stack, values) {
-  stack.addImage(getDiagram(values[0], "1", "laundry"));
-  stack.addImage(getDiagram(values[1], "2", "laundry"));
-  stack.addImage(getDiagram(values[2], "3", "laundry"));
-
+function washStackFiller(stack, machines) {
+  machines.forEach((machine, index) => {
+    stack.addImage(getDiagram(machine, String(index + 1), "laundry"));
+  })
 }
 
-function dryerStackFiller(stack, values) {
-
-  stack.addImage(getDiagram(values[0], "1", "dryer"));
-  stack.addImage(getDiagram(values[1], "2", "dryer"));
-  stack.addImage(getDiagram(values[2], "3", "dryer"));
-
+function dryerStackFiller(stack, machines) {
+  machines.forEach((machine, index) => {
+    stack.addImage(getDiagram(machine, String(index + 1), "dryer"));
+  })
 }
 
 function getDiagram(percentage, text, machine) {
@@ -313,7 +343,7 @@ function getDiagram(percentage, text, machine) {
 
 
 async function getLaundryStatus() {
-  const req = new Request("http://77.75.166.66/Status.asp")
+  const req = new Request(dorm_ip)
 
   req.headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -392,14 +422,14 @@ async function getLaundryStatus() {
         progress = percent
       }
 
-      if (input[i].includes("WASH")) {
+      if (input[i].includes("WASH") || input[i].includes("VASK")) {
         machines.wash.push(progress)
-      } else if (input[i].includes("DRYER")) {
+      } else if (input[i].includes("DRYER") || input[i].includes("TUMBLER")) {
         machines.dryer.push(progress)
       }
 
     }
-    console.log(`Output: ${machines}`)
+    console.log(`Wash: ${machines.wash} ; Dryer: ${machines.dryer}`)
     return machines
   }
 }
