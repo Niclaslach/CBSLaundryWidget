@@ -13,7 +13,7 @@ Moreover, the widget lets users check their **current balance of their laundry t
 - Rings show progress of each machine
 - Display current balance of your laundr tag
 
-All features are also explained in the graphic below:
+**All features are also explained in the graphic below:**
 <p align="center">
  <img src="images/Explanation.jpg" width=600>
 </p>
