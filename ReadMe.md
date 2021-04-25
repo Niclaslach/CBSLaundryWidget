@@ -1,7 +1,24 @@
 # CBS Laundry Widget
 
-This project creates an iOS widget using the [Scriptable App](https://scriptable.app).  
+This project creates an iOS widget to **monitor washing machines and dryers** in all CBS dorms using the [Scriptable App](https://scriptable.app).  
+Moreover, the widget lets users check their **current balance of their laundry tag**.  
 <img src="images/ExamplePicture.png" width=200>
+
+### Features
+- See the status of laundry machines and dryers
+- Colour encoding quickly shows the status of the machines
+  - Red: *In use*
+  - Yellow: *Soon to finish*
+  - Green: *Machine ready / finished*
+- Rings show progress of each machine
+- Display current balance of your laundr tag
+
+All features are also explained in the graphic below:
+<p align="center">
+ <img src="images/Explanation.jpg" width=600>
+</p>
+
+
 
 ## Install the Widget
 
