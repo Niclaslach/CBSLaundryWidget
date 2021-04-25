@@ -42,3 +42,4 @@ The suggested size is small.
 8. **Optional:** Under Parameter enter your username and password to see your current Saniva balance.  
 The format should be *\<username\>;\<password\>*  
 *Example: 123;0000*
+9. **Optional:** Change the setting *When Interacting* from *Open App* to *Run Script* to update the widget by clicking on it.
