@@ -26,12 +26,13 @@ Moreover, the widget lets users check their **current balance of their laundry t
 2. Create a new script inside Scriptable.
 3. Rename the script by clicking on its name in the top.
   *(This step is not necessary but it is good practice. :stuck_out_tongue_winking_eye:)*
-4. Copy the code of [CBSLaundryWidget.js](https://github.com/Niclaslach/CBSLaundryWidget/blob/main/CBSLaundryWidget.js) into the empty script.
+4. Copy the code of [CBSLaundryWidget.js](https://github.com/Niclaslach/CBSLaundryWidget/blob/main/CBSLaundryWidget.js) into the empty script.  
+You can easily copy the code [**HERE**](https://www.niclaslach.de/copyCBSLaundryWidgetCode).
 5. Change variable *dorm* to your dorm (in quotes, spelling important). Options are:  
    - Porcelaenshaven
    - Holger Danske Kollegiet
    - Nimbusparken
-   - Kathrine kollegiet
+   - Kathrine kollegiet  
     <img src="images/ChooseDorm.png" width=300>
 
 6. Add the Scriptable widget to your homescreen (hold on an app until it shakes and click the "+" button on the upper left corner).  
