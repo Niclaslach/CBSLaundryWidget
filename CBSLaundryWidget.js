@@ -7,7 +7,7 @@ const thresholds = {
   green: 100
 }
 
-const dorm = "Nimbusparken" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
+const dorm = "!REPLACE_ME!" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
 
 
 let dorm_ip = ""
