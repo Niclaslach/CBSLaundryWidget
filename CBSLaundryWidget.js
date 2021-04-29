@@ -8,6 +8,8 @@ const thresholds = {
 }
 
 const dorm = "Nimbusparken" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
+
+
 let dorm_ip = ""
 
 switch (dorm) {
