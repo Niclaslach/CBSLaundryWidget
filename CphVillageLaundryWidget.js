@@ -7,32 +7,6 @@ const thresholds = {
   green: 100
 }
 
-const dorm = "!REPLACE_ME!" // Copy your dorm: Porcelaenshaven, Holger Danske Kollegiet, Nimbusparken, Kathrine kollegiet
-
-
-let dorm_ip = ""
-
-switch (dorm) {
-  case "Porcelaenshaven":
-    dorm_ip = "http://77.75.166.66/Status.asp"
-    break;
-
-  case "Holger Danske Kollegiet":
-    dorm_ip = "http://95.209.150.175/Status.asp"
-    break;
-
-  case "Nimbusparken":
-    dorm_ip = "http://77.75.160.131/Status.asp"
-    break;
-
-  case "Kathrine kollegiet":
-    dorm_ip = "http://95.209.150.208/Status.asp"
-    break;
-
-  default:
-    throw new Error("Dorm unknown");
-}
-
 const debugging = 1
 
 let darkmode = null
@@ -51,7 +25,7 @@ if (config.runsInWidget) {
   // Runs inside a widget so add it to the homescreen widget
   Script.setWidget(widget);
 } else {
-  // Show the medium widget inside the app
+  // Show the small widget inside the app
   widget.presentSmall();
 }
 
@@ -142,10 +116,11 @@ function addWashStack(listwidget, machines) {
   let washStacks = [listwidget.addStack()];
 
   machines.forEach((machine, index) => {
-    if (index % 4 == 0 && index > 0) {
-      washStacks.push(listwidget.addStack())
-    }
-    washStacks[Math.floor(index/4)].addImage(getDiagram(machine, String(index + 1), "laundry"));
+//     if (index % 4 == 0 && index > 0) {
+//       washStacks.push(listwidget.addStack())
+//     }
+//     washStacks[Math.floor(index/4)].addImage(getDiagram(machine, String(index + 1), "laundry"));  
+      washStacks[0].addImage(getDiagram(machine,String(index + 1), "laundry"))
   })
 }
 
@@ -339,89 +314,90 @@ function getDiagram(percentage, text, machine) {
 
 
 
-async function getLaundryStatus() {
-  const req = new Request(dorm_ip)
-
-  req.headers = {
-    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
-    "upgrade-insecure-requests": "1"
-  }
-
-  const answer = await req.loadString()
-  // 
-  if (loginCredentials.length == 2) {
-    let loginReq = new Request("http://77.75.166.66/aLog.asp")
-    loginReq.method = "POST"
-    loginReq.headers = {
-      'Cookie': req.response.headers["Set-Cookie"]
-    };
-    loginReq.body = `username=${loginCredentials[0]}&password=${loginCredentials[1]}`
-    loginReq.load()
-
-    let balanceReq = new Request("http://77.75.166.66/Saldo.asp")
-    balanceReq.headers = loginReq.headers
-    balanceSite = await balanceReq.loadString()
-    let balanceIndex = balanceSite.indexOf("Balance")
-    balance = balanceSite.slice(balanceIndex, balanceIndex + 50).split("&nbsp;")[1]
-
-    console.log(balanceSite)
-    balance = (balance + "kr.").replace(",", ".").slice(0, -1)
-    try {
-      //     balance = balance.replace(",", ".") + 'kr';
-    } catch (err) {
-      balance = "error";
-    }
-  }
-
-
-  webView = new WebView()
-
-  await webView.loadHTML(answer)
-  const getData = `
-        function getData(){
-             a = []
-             x = document.getElementsByClassName("noborder")
-             for(s of x){
-                 a.push(s.innerText)
-             }
-             return a
-      
-         } 
+async function getLaundryStatus() {  
+  let req = new Request("https://web.payperwash.com/PPW0107/Default.aspx")
   
-      getData()  
-  `
-  let response = await webView.evaluateJavaScript(getData, false)
-
-
-
-  console.log(`Response: ${response}`)
-
+  let answer = await req.loadString()
+    
+  const cookie = req.response["cookies"][0]["value"]
+  
+  console.log(cookie)
+  
+  req = new Request("https://web.payperwash.com/PPW0107/Default.aspx")
+  
+  req.method = "POST"
+  
+  req.headers = {"Cookie": "RCARDM5WebBoka="+cookie}
+  
+  console.log(req.headers)
+  
+  req.body = "__EVENTTARGET=ctl00%24ContentPlaceHolder1%24btOK&__EVENTARGUMENT=&__VIEWSTATE=%2FwEPDwUJLTY3OTUyMjQ4D2QWAmYPZBYCAgMPZBYGAgEPDxYCHgdWaXNpYmxlaGQWAmYPFQEHTG9nIGluZGQCAw9kFgICAQ9kFgoCAQ8PFgIeBFRleHQFGVBheSBwZXIgd2FzaCAtIFZpc2lvbiBXZWJkZAIDDw8WAh8BBQVOYXZuOmRkAgcPDxYCHwEFDEFkZ2FuZ3Nrb2RlOmRkAgsPDxYCHwEFB0xvZyBpbmRkZAINDw8WAh8BBQpHbGVtdCBrb2RlZGQCBQ8PFgIfAQU%2BVmVyc2lvbiAxLjIuMC4xMiBDb3B5cmlnaHQgRWxlY3Ryb2x1eCBMYXVuZHJ5IFN5c3RlbSBTd2VkZW4gQUJkZGS5l%2F9GKbyojic%2FpYLpSAwGr8ePlA%3D%3D&__VIEWSTATEGENERATOR=B39680A7&__EVENTVALIDATION=%2FwEWBgKG9o6wDAKi8%2Fy9CAKqgsX1DAKZ7b30DgKg%2BM%2FXDwLg74q7AvX7ndEnMX7WJBNqiHyK4mAlB5DM&ctl00%24MessageType=ERROR&ctl00%24ContentPlaceHolder1%24tbUsername=<email>&ctl00%24ContentPlaceHolder1%24tbPassword=<Password>"
+  
+  await req.loadString()
+  
+  req = new Request("https://web.payperwash.com/PPW0107/Machine/MachineGroupStat.aspx")
+  
+  req.headers = {"Cookie": "RCARDM5WebBoka="+cookie}
+  
+  answer = await req.loadString()
+  
+  
+  webView = new WebView()
+  //   webView.present()
+  
+    await webView.loadHTML(answer)
+    const getData = `
+          function getData(){
+               a = []
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl00_Repeater2_ctl00_MaskGrpTitle" ).innerText)
+               
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl00_Repeater2_ctl01_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl00_Repeater2_ctl02_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl00_Repeater2_ctl03_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl00_Repeater2_ctl04_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl02_Repeater2_ctl00_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl02_Repeater2_ctl01_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl02_Repeater2_ctl02_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl02_Repeater2_ctl03_MaskGrpTitle" ).innerText)
+  
+               a.push (document.getElementById( "ctl00_ContentPlaceHolder1_Repeater1_ctl02_Repeater2_ctl01_MaskGrpTitle" ).innerText)
+  
+  
+               return a
+        
+           } 
+    
+        getData()  
+    `
+    let response = await webView.evaluateJavaScript(getData, false)
+  
+  
+   console.log(`Response: ${response}`)
+    
   return calcProgress(response)
 
 
   function calcProgress(input) {
-    input = input.slice(2)
 
-    let machines = { wash: [], dryer: [] }
+    let machines = { wash: [], dryer: [] }  
     let progress = 0
-    for (i = 0; i < input.length; i = i + 5) {
-      progress = 0
-      if (input[i + 2] == "Ready") {
+    for (i = 0; i < input.length; i++) {
+      progress = 70
+      if (input[i].includes("Ledig")) {
         progress = 101
-      } else {
-
-        let startTime = input[i + 4].split(" ")[1].split(":")
-        console.log(startTime)
-        let now = new Date
-        var percent = Math.min(((now.getHours() - startTime[0]) * 60 + now.getMinutes() - startTime[1]) / 70 * 100, 90)
-        console.log(percent)
-        progress = percent
-      }
+      } 
+      
 
       if (input[i].includes("WASH") || input[i].includes("VASK")) {
         machines.wash.push(progress)
-      } else if (input[i].includes("DRYER") || input[i].includes("TUMBLER")) {
+      } else if (input[i].includes("DRYER") || input[i].includes("TUMBLER")  || input[i].includes("TØRRE")){
         machines.dryer.push(progress)
       }
 
@@ -429,5 +405,5 @@ async function getLaundryStatus() {
     console.log(`Wash: ${machines.wash} ; Dryer: ${machines.dryer}`)
     return machines
   }
+    
 }
-
